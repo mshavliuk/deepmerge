@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TypeVar
+from typing import Any, TypeVar, Never
 
 import deepmerge.merger
 from .core import StrategyList
@@ -32,3 +32,10 @@ class TypeConflictStrategies(StrategyList):
     ) -> T1 | T2:
         """overrides the new object over the old object only if the new object is not empty or null"""
         return nxt if nxt else base
+
+    @staticmethod
+    def strategy_raise(config: deepmerge.merger.Merger, path: list, base: T1, nxt: T2) -> Never:
+        """raises a TypeError indicating a type conflict"""
+        raise TypeError(
+            f"Type conflict at {'.'.join(map(str, path))}: cannot merge {type(base).__name__} with {type(nxt).__name__}"
+        )
